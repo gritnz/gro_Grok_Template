@@ -1,69 +1,46 @@
-import os
 import json
-import yaml
 from datetime import datetime
 
 class SummarizerAgent:
     def __init__(self):
-        with open("F:/gro_Grok_Template/config/dev_config.yaml", "r") as f:
-            self.config = yaml.safe_load(f)
         self.state_file = "F:/gro_Grok_Template/data/historical/state.json"
-        self.sync_file = "F:/gro_Grok_Template/data/sync.json"
-        self.max_size_mb = self.config["data"]["max_size_mb"]
 
-    def summarize_and_prune(self):
-        if not os.path.exists(self.state_file):
-            state = {"history": []}
-        else:
-            try:
-                with open(self.state_file, "r") as f:
-                    state = json.load(f)
-            except (json.JSONDecodeError, ValueError):
-                state = {"history": []}
-
-        # Debug: Print state before processing
-        print("State before update:", json.dumps(state))
+    def summarize_and_prune(self, input_text=""):
+        # Read the current state
+        try:
+            with open(self.state_file, "r") as f:
+                state = json.load(f)
+        except FileNotFoundError:
+            state = {"history": [], "chat_summaries": [], "wip": {}, "related_data": {}, "progress": "", "latest_input": ""}
+            print(f"State file not found, initializing new state: {state}")
 
         # Ensure history exists
         if "history" not in state or not isinstance(state["history"], list):
             state["history"] = []
 
-        # Get latest input
-        latest_input = state.get("input", "")
-        print("Latest input from state:", latest_input)
+        # Use provided input if given, else fall back to state["input"]
+        latest_input = input_text if input_text else state.get("input", "")
+        print(f"Latest input from state: {latest_input}")
 
-        # Add to history if new and non-empty
-        if latest_input and (not state["history"] or state["history"][-1]["input"] != latest_input):
+        # Add the latest input if it’s not empty
+        if latest_input:
             state["history"].append({
                 "input": latest_input,
                 "timestamp": datetime.now().isoformat()
             })
+            state["history"] = state["history"][-5:]  # Keep last 5
+            state["latest_input"] = latest_input
+            state["progress"] = f"Updated on {datetime.now().isoformat()}"
+            print(f"Updated history: {state['history']}")
 
-        # Keep last 5
-        state["history"] = state["history"][-5:]
-
-        # Update summary
-        summary = {
-            "latest_input": latest_input,
-            "timestamp": datetime.now().isoformat(),
-            "progress": state.get("progress", "Started")
-        }
-        state.update(summary)
-
-        # Prune if over size
-        while os.path.exists(self.state_file) and os.path.getsize(self.state_file) > self.max_size_mb * 1024 * 1024:
-            state["history"] = state["history"][-1:]
-            break
-
-        # Save state
-        with open(self.state_file, "w") as f:
-            json.dump(state, f)
-
-        # Save sync
-        with open(self.sync_file, "w") as f:
-            json.dump(summary, f)
+        # Save the updated state
+        try:
+            with open(self.state_file, "w") as f:
+                json.dump(state, f, indent=2)
+            print("Data summarized and pruned successfully")
+        except Exception as e:
+            print(f"Error writing to state file: {e}")
 
 if __name__ == "__main__":
     summarizer = SummarizerAgent()
     summarizer.summarize_and_prune()
-    print("Summarized and synced")
