@@ -1,2 +1,0 @@
-agency-swarm==0.2.3
-pyyaml==6.0.2
