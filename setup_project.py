@@ -11,20 +11,30 @@ def run_command(command, cwd=None):
     print(result.stdout)
     return True
 
-def setup_project(project_name, env_name):
+def setup_project(project_name, env_name, parent_dir):
     """Automate the setup of a new project from gro_Grok_Template."""
     print(f"Setting up new project: {project_name}")
 
-    # Step 1: Clone Repository
-    print("Cloning repository...")
-    clone_url = "https://github.com/gritnz/gro_Grok_Template.git"
-    if os.path.exists(project_name):
-        print(f"Directory {project_name} already exists, skipping clone.")
-    else:
-        if not run_command(f"git clone {clone_url} {project_name}"):
-            return False
+    # Check if we're already in a cloned project directory
+    current_dir = os.getcwd()
+    is_cloned_project = os.path.exists(os.path.join(current_dir, "src", "gro_instructor.py")) and \
+                        os.path.exists(os.path.join(current_dir, "template_data"))
 
-    project_dir = os.path.abspath(project_name)
+    if is_cloned_project:
+        print("Detected existing project directory. Skipping clone.")
+        project_dir = current_dir
+    else:
+        # Step 1: Clone Repository
+        print("Cloning repository...")
+        clone_url = "https://github.com/gritnz/gro_Grok_Template.git"
+        project_dir = os.path.join(parent_dir, project_name)
+        if os.path.exists(project_dir):
+            print(f"Directory {project_dir} already exists, skipping clone.")
+        else:
+            if not run_command(f"git clone {clone_url} {project_name}", cwd=parent_dir):
+                return False
+
+    project_dir = os.path.abspath(project_dir)
     print(f"Project directory: {project_dir}")
 
     # Step 2: Set Up Conda Environment
@@ -62,6 +72,7 @@ def setup_project(project_name, env_name):
     return True
 
 if __name__ == "__main__":
+    parent_dir = input("Enter the parent directory for the new project (e.g., F:\\): ").strip()
     project_name = input("Enter project name: ").strip()
     env_name = input("Enter Conda environment name: ").strip()
-    setup_project(project_name, env_name)
+    setup_project(project_name, env_name, parent_dir)
