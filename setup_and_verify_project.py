@@ -1,7 +1,6 @@
 import os
 import subprocess
 import shutil
-import psutil
 import time
 import sys
 
@@ -17,17 +16,12 @@ def run_command(command, cwd=None, shell=True):
 def terminate_processes_using_dir(directory):
     """Terminate processes that might be locking files in the directory."""
     print(f"Checking for processes locking {directory}...")
-    directory = os.path.abspath(directory)
-    for proc in psutil.process_iter(['pid', 'name', 'open_files']):
-        try:
-            for file in proc.info['open_files'] or []:
-                if file.path.startswith(directory):
-                    print(f"Terminating process {proc.info['name']} (PID: {proc.info['pid']}) using {file.path}")
-                    proc.terminate()
-                    proc.wait(timeout=5)  # Wait for the process to terminate
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            continue
+    # Terminate any Python processes that might be holding the directory
+    success, _ = run_command("taskkill /IM python.exe /F")
+    if not success:
+        print("Warning: Could not terminate Python processes, proceeding anyway...")
     time.sleep(1)  # Give the system a moment to release locks
+    return True
 
 def clean_directory(directory):
     """Delete a directory, handling file access issues."""
@@ -35,7 +29,8 @@ def clean_directory(directory):
         print(f"Directory {directory} does not exist, skipping cleanup.")
         return True
     print(f"Cleaning directory {directory}...")
-    terminate_processes_using_dir(directory)
+    if not terminate_processes_using_dir(directory):
+        print("Failed to terminate processes, proceeding with cleanup anyway...")
     try:
         shutil.rmtree(directory, ignore_errors=True)
         if os.path.exists(directory):
@@ -127,6 +122,18 @@ def setup_project(template_dir, project_dir, env_name):
     os.makedirs(dest_dir, exist_ok=True)
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
     print(f"Copied {src_dir} to {dest_dir}")
+
+    # Initialize history_log.jsonl and state.json if they don't exist
+    history_log = os.path.join(dest_dir, "history_log.jsonl")
+    state_file = os.path.join(dest_dir, "state.json")
+    if not os.path.exists(history_log):
+        with open(history_log, "w") as f:
+            pass  # Create empty file
+        print(f"Created {history_log}")
+    if not os.path.exists(state_file):
+        with open(state_file, "w") as f:
+            f.write("{}")  # Create empty JSON
+        print(f"Created {state_file}")
 
     # Test gro_instructor.py
     print("Testing gro_instructor.py...")
