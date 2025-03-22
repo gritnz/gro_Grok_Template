@@ -159,7 +159,7 @@ def setup_project(template_dir, project_dir, env_name):
     )
     print(f"Output: {output}")
     print(f"Error: {error}")
-    if "Hey there! How can I assist you today?" not in output:
+    if "User interaction: I’ll respond directly to your query." not in output:
         print("gro_instructor.py did not respond as expected. Check the script and data setup.")
         return False
     if not success:
