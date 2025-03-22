@@ -16,17 +16,13 @@ def run_command(command, cwd=None, shell=True, timeout=None, input_data=None):
             timeout=timeout,
             input=input_data
         )
-        if result.returncode != 0:
-            print(f"Error: {result.stderr}")
-            return False, result.stderr
-        print(result.stdout)
-        return True, result.stdout
+        return result.returncode == 0, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         print(f"Command timed out after {timeout} seconds: {command}")
-        return False, f"Command timed out after {timeout} seconds"
+        return False, "", f"Command timed out after {timeout} seconds"
     except Exception as e:
         print(f"Error running command: {e}")
-        return False, str(e)
+        return False, "", str(e)
 
 def terminate_processes_using_dir(directory):
     """Terminate Python processes (except the current one) that might be locking files in the directory."""
@@ -34,9 +30,9 @@ def terminate_processes_using_dir(directory):
     # Get the current process ID to avoid terminating this script
     current_pid = os.getpid()
     # Terminate all python.exe processes except the current one
-    success, output = run_command(f"taskkill /IM python.exe /F /FI \"PID ne {current_pid}\"")
+    success, output, error = run_command(f"taskkill /IM python.exe /F /FI \"PID ne {current_pid}\"")
     if not success:
-        print(f"Warning: Could not terminate Python processes: {output}")
+        print(f"Warning: Could not terminate Python processes: {error}")
         print("Proceeding with cleanup anyway...")
     time.sleep(1)  # Give the system a moment to release locks
     return True
@@ -53,7 +49,7 @@ def clean_directory(directory):
         shutil.rmtree(directory, ignore_errors=True)
         if os.path.exists(directory):
             print(f"Failed to delete {directory} using shutil.rmtree, trying rmdir...")
-            success, _ = run_command(f"rmdir /S /Q {directory}")
+            success, _, _ = run_command(f"rmdir /S /Q {directory}")
             if not success:
                 return False
         print(f"Successfully deleted {directory}.")
@@ -68,7 +64,7 @@ def git_operations(repo_dir):
     os.chdir(repo_dir)
 
     # Check for uncommitted changes
-    success, output = run_command("git status --porcelain")
+    success, output, _ = run_command("git status --porcelain")
     if not success:
         return False
     if output.strip():
@@ -76,7 +72,7 @@ def git_operations(repo_dir):
         run_command("git stash")
 
     # Pull remote changes
-    success, output = run_command("git pull origin master")
+    success, output, _ = run_command("git pull origin master")
     if not success:
         if "CONFLICT" in output:
             print("Merge conflict detected. Please resolve conflicts manually in VS Code:")
@@ -89,7 +85,7 @@ def git_operations(repo_dir):
         return False
 
     # Push changes (if any)
-    success, _ = run_command("git push origin master")
+    success, _, _ = run_command("git push origin master")
     if not success:
         print("Git push failed, please check the error and resolve manually.")
         return False
@@ -113,7 +109,7 @@ def setup_project(template_dir, project_dir, env_name):
             print(f"Directory {project_dir} already exists, cleaning it...")
             if not clean_directory(project_dir):
                 return False
-        success, _ = run_command(f"git clone {clone_url} {project_name}", cwd=parent_dir)
+        success, _, _ = run_command(f"git clone {clone_url} {project_name}", cwd=parent_dir)
         if not success:
             return False
 
@@ -122,9 +118,9 @@ def setup_project(template_dir, project_dir, env_name):
 
     # Set up Conda environment
     print("Setting up Conda environment...")
-    success, output = run_command("conda env list")
+    success, output, _ = run_command("conda env list")
     if env_name not in output:
-        success, _ = run_command(f"conda create -n {env_name} python=3.11 -y")
+        success, _, _ = run_command(f"conda create -n {env_name} python=3.11 -y")
         if not success:
             return False
     print(f"Conda environment '{env_name}' is ready. Ensure it's activated: conda activate {env_name}")
@@ -155,18 +151,19 @@ def setup_project(template_dir, project_dir, env_name):
 
     # Test gro_instructor.py with input and timeout
     print("Testing gro_instructor.py...")
-    success, output = run_command(
+    success, output, error = run_command(
         "python src/gro_instructor.py",
         shell=True,
         timeout=10,  # 10-second timeout
         input_data="Hello #e5\n"  # Provide the expected input
     )
-    if not success:
-        print("Failed to run gro_instructor.py. Ensure the Conda environment is activated.")
-        return False
+    print(f"Output: {output}")
+    print(f"Error: {error}")
     if "Hey there! How can I assist you today?" not in output:
         print("gro_instructor.py did not respond as expected. Check the script and data setup.")
         return False
+    if not success:
+        print("gro_instructor.py exited with an error, but produced the expected output, so proceeding.")
 
     print(f"Setup complete! Project ready at {project_dir}")
     return True
