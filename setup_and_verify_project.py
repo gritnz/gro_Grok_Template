@@ -14,12 +14,15 @@ def run_command(command, cwd=None, shell=True):
     return True, result.stdout
 
 def terminate_processes_using_dir(directory):
-    """Terminate processes that might be locking files in the directory."""
+    """Terminate Python processes (except the current one) that might be locking files in the directory."""
     print(f"Checking for processes locking {directory}...")
-    # Terminate any Python processes that might be holding the directory
-    success, _ = run_command("taskkill /IM python.exe /F")
+    # Get the current process ID to avoid terminating this script
+    current_pid = os.getpid()
+    # Terminate all python.exe processes except the current one
+    success, output = run_command(f"taskkill /IM python.exe /F /FI \"PID ne {current_pid}\"")
     if not success:
-        print("Warning: Could not terminate Python processes, proceeding anyway...")
+        print(f"Warning: Could not terminate Python processes: {output}")
+        print("Proceeding with cleanup anyway...")
     time.sleep(1)  # Give the system a moment to release locks
     return True
 
