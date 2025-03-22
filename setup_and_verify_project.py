@@ -4,14 +4,29 @@ import shutil
 import time
 import sys
 
-def run_command(command, cwd=None, shell=True):
+def run_command(command, cwd=None, shell=True, timeout=None, input_data=None):
     """Run a shell command and handle errors."""
-    result = subprocess.run(command, shell=shell, cwd=cwd, text=True, capture_output=True)
-    if result.returncode != 0:
-        print(f"Error: {result.stderr}")
-        return False, result.stderr
-    print(result.stdout)
-    return True, result.stdout
+    try:
+        result = subprocess.run(
+            command,
+            shell=shell,
+            cwd=cwd,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            input=input_data
+        )
+        if result.returncode != 0:
+            print(f"Error: {result.stderr}")
+            return False, result.stderr
+        print(result.stdout)
+        return True, result.stdout
+    except subprocess.TimeoutExpired:
+        print(f"Command timed out after {timeout} seconds: {command}")
+        return False, f"Command timed out after {timeout} seconds"
+    except Exception as e:
+        print(f"Error running command: {e}")
+        return False, str(e)
 
 def terminate_processes_using_dir(directory):
     """Terminate Python processes (except the current one) that might be locking files in the directory."""
@@ -138,9 +153,14 @@ def setup_project(template_dir, project_dir, env_name):
             f.write("{}")  # Create empty JSON
         print(f"Created {state_file}")
 
-    # Test gro_instructor.py
+    # Test gro_instructor.py with input and timeout
     print("Testing gro_instructor.py...")
-    success, output = run_command("python src/gro_instructor.py", shell=True)
+    success, output = run_command(
+        "python src/gro_instructor.py",
+        shell=True,
+        timeout=10,  # 10-second timeout
+        input_data="Hello #e5\n"  # Provide the expected input
+    )
     if not success:
         print("Failed to run gro_instructor.py. Ensure the Conda environment is activated.")
         return False
