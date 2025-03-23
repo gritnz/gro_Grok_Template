@@ -1,180 +1,67 @@
+# F:\gro_Grok_Template\setup_and_verify_project.py
 import os
-import subprocess
 import shutil
-import time
+import subprocess
 import sys
 
-def run_command(command, cwd=None, shell=True, timeout=None, input_data=None):
-    """Run a shell command and handle errors."""
-    try:
-        result = subprocess.run(
-            command,
-            shell=shell,
-            cwd=cwd,
-            text=True,
-            capture_output=True,
-            timeout=timeout,
-            input=input_data
-        )
-        return result.returncode == 0, result.stdout, result.stderr
-    except subprocess.TimeoutExpired:
-        print(f"Command timed out after {timeout} seconds: {command}")
-        return False, "", f"Command timed out after {timeout} seconds"
-    except Exception as e:
-        print(f"Error running command: {e}")
-        return False, "", str(e)
+def setup_project(project_dir):
+    """Set up the project directory by copying necessary files from the template."""
+    if not os.path.exists(project_dir):
+        os.makedirs(project_dir)
 
-def terminate_processes_using_dir(directory):
-    """Terminate Python processes (except the current one) that might be locking files in the directory."""
-    print(f"Checking for processes locking {directory}...")
-    current_pid = os.getpid()
-    success, output, error = run_command(f"taskkill /IM python.exe /F /FI \"PID ne {current_pid}\"")
-    if not success:
-        print(f"Warning: Could not terminate Python processes: {error}")
-        print("Proceeding with cleanup anyway...")
-    time.sleep(1)
-    return True
+    template_dir = os.path.dirname(os.path.abspath(__file__))
+    for dir_name in ["src", "template_data", "docs"]:  # Added "docs"
+        src_dir = os.path.join(template_dir, dir_name)
+        dst_dir = os.path.join(project_dir, dir_name)
+        if os.path.exists(src_dir):
+            shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+        else:
+            print(f"Warning: {src_dir} does not exist in template.")
 
-def clean_directory(directory):
-    """Delete a directory, handling file access issues."""
-    if not os.path.exists(directory):
-        print(f"Directory {directory} does not exist, skipping cleanup.")
-        return True
-    print(f"Cleaning directory {directory}...")
-    if not terminate_processes_using_dir(directory):
-        print("Failed to terminate processes, proceeding with cleanup anyway...")
-    try:
-        shutil.rmtree(directory, ignore_errors=True)
-        if os.path.exists(directory):
-            print(f"Failed to delete {directory} using shutil.rmtree, trying rmdir...")
-            success, _, _ = run_command(f"rmdir /S /Q {directory}")
-            if not success:
-                return False
-        print(f"Successfully deleted {directory}.")
-        return True
-    except Exception as e:
-        print(f"Failed to delete {directory}: {e}")
-        return False
-
-def git_operations(repo_dir):
-    """Handle Git pull, merge, and push with conflict detection."""
-    print(f"Performing Git operations in {repo_dir}...")
-    os.chdir(repo_dir)
-
-    success, output, _ = run_command("git status --porcelain")
-    if not success:
-        return False
-    if output.strip():
-        print("Uncommitted changes detected, stashing them...")
-        run_command("git stash")
-
-    success, output, _ = run_command("git pull origin master")
-    if not success:
-        if "CONFLICT" in output:
-            print("Merge conflict detected. Please resolve conflicts manually in VS Code:")
-            print("1. Open the conflicting files in VS Code.")
-            print("2. Resolve conflicts (look for <<<<<<<, =======, >>>>>>> markers).")
-            print("3. Stage the resolved files: git add <file>")
-            print("4. Complete the merge: git commit")
-            return False
-        print("Git pull failed, aborting.")
-        return False
-
-    success, _, _ = run_command("git push origin master")
-    if not success:
-        print("Git push failed, please check the error and resolve manually.")
-        return False
-    return True
-
-def setup_project(template_dir, project_dir, env_name):
-    """Set up a new project from the template."""
-    print(f"Setting up project in {project_dir}...")
-
-    is_cloned_project = os.path.exists(os.path.join(project_dir, "src", "gro_instructor.py")) and \
-                        os.path.exists(os.path.join(project_dir, "template_data"))
-
-    if not is_cloned_project:
-        print("Cloning repository...")
-        clone_url = "https://github.com/gritnz/gro_Grok_Template.git"
-        parent_dir = os.path.dirname(project_dir)
-        project_name = os.path.basename(project_dir)
-        if os.path.exists(project_dir):
-            print(f"Directory {project_dir} already exists, cleaning it...")
-            if not clean_directory(project_dir):
-                return False
-        success, _, _ = run_command(f"git clone {clone_url} {project_name}", cwd=parent_dir)
-        if not success:
-            return False
-
-    os.chdir(project_dir)
-
-    print("Setting up Conda environment...")
-    success, output, _ = run_command("conda env list")
-    if env_name not in output:
-        success, _, _ = run_command(f"conda create -n {env_name} python=3.11 -y")
-        if not success:
-            return False
-    print(f"Conda environment '{env_name}' is ready. Ensure it's activated: conda activate {env_name}")
-
-    print("Initializing data...")
-    src_dir = os.path.join(project_dir, "template_data")
-    dest_dir = os.path.join(project_dir, "data", "historical")
-    if os.path.exists(dest_dir):
-        print(f"Removing existing {dest_dir}...")
-        if not clean_directory(dest_dir):
-            return False
-    os.makedirs(dest_dir, exist_ok=True)
-    shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
-    print(f"Copied {src_dir} to {dest_dir}")
-
-    history_log = os.path.join(dest_dir, "history_log.jsonl")
-    state_file = os.path.join(dest_dir, "state.json")
-    if not os.path.exists(history_log):
-        with open(history_log, "w") as f:
-            pass
-        print(f"Created {history_log}")
-    if not os.path.exists(state_file):
-        with open(state_file, "w") as f:
-            f.write("{}")
-        print(f"Created {state_file}")
-
-    print("Testing gro_instructor.py...")
-    success, output, error = run_command(
-        "python src/gro_instructor.py",
-        shell=True,
-        timeout=10,
-        input_data="Hello\n"
+def verify_project(project_dir):
+    """Verify the project setup by running gro_instructor.py and checking its response."""
+    process = subprocess.run(
+        ["python", "src/gro_instructor.py"],
+        cwd=project_dir,
+        input="#e1\n",
+        text=True,
+        capture_output=True,
+        timeout=10
     )
-    print(f"Output: {output}")
-    print(f"Error: {error}")
-    if "Hey there! How can I assist you today?" not in output:
-        print("gro_instructor.py did not respond as expected. Check the script and data setup.")
+    expected_response = "Debug info: Low relevance, focusing on setup or minor issues."
+    if expected_response not in process.stdout:
+        print(f"Verification failed: Expected '{expected_response}' in output, got: {process.stdout}")
         return False
-    if not success:
-        print("gro_instructor.py exited with an error, but produced the expected output, so proceeding.")
-
-    print(f"Setup complete! Project ready at {project_dir}")
+    print("Verification passed: gro_instructor.py responded as expected.")
     return True
+
+def terminate_processes():
+    """Terminate any lingering Python processes (excluding the current one)."""
+    subprocess.run(
+        f"taskkill /F /IM python.exe /T /FI \"PID ne {os.getpid()}\"",
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
 
 def main():
-    template_dir = r"F:\gro_Grok_Template"
-    project_dir = r"F:\TestProject"
-    env_name = "TestEnv"
-
-    nested_dir = os.path.join(project_dir, "TestProject")
-    if not clean_directory(nested_dir):
-        print("Failed to clean nested directory. Aborting.")
+    if len(sys.argv) != 2:
+        print("Usage: python setup_and_verify_project.py <project_dir>")
         sys.exit(1)
 
-    if not git_operations(template_dir):
-        print("Git operations failed. Resolve any issues and rerun the script.")
+    project_dir = sys.argv[1]
+    print(f"Setting up project in {project_dir}...")
+    setup_project(project_dir)
+
+    print("Verifying project setup...")
+    if not verify_project(project_dir):
+        print("Project verification failed.")
         sys.exit(1)
 
-    if not setup_project(template_dir, project_dir, env_name):
-        print("Project setup failed. Check the errors above and resolve them.")
-        sys.exit(1)
+    print("Cleaning up processes...")
+    terminate_processes()
 
-    print("All steps completed successfully!")
+    print("Project setup and verification completed successfully!")
 
 if __name__ == "__main__":
     main()
