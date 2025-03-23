@@ -10,13 +10,17 @@ def setup_project(project_dir):
         os.makedirs(project_dir)
 
     template_dir = os.path.dirname(os.path.abspath(__file__))
-    for dir_name in ["src", "template_data", "docs"]:  # Added "docs"
+    for dir_name in ["src", "template_data", "docs", "data/historical"]:  # Added "data/historical"
         src_dir = os.path.join(template_dir, dir_name)
         dst_dir = os.path.join(project_dir, dir_name)
+        # Ensure the source directory exists before copying
         if os.path.exists(src_dir):
+            # Ensure the parent directory of the destination exists
+            os.makedirs(os.path.dirname(dst_dir), exist_ok=True)
             shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
         else:
-            print(f"Warning: {src_dir} does not exist in template.")
+            print(f"Warning: {src_dir} does not exist in template. Creating empty directory at {dst_dir}.")
+            os.makedirs(dst_dir, exist_ok=True)
 
 def verify_project(project_dir):
     """Verify the project setup by running gro_instructor.py and checking its response."""
