@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import shutil
+import stat
 
 def run_command(command, cwd=None, shell=True):
     result = subprocess.run(command, cwd=cwd, shell=shell, text=True, capture_output=True)
@@ -11,12 +12,25 @@ def run_command(command, cwd=None, shell=True):
         print(f"Error: {result.stderr}")
     return result.returncode == 0
 
+def remove_readonly(func, path, _):
+    """Clear the readonly bit and reattempt the removal."""
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
 def create_project(project_name, project_dir, github_username, python_version="3.11.11"):
     # Step 1: Clone the new repository
     repo_url = f"https://github.com/{github_username}/{project_name}.git"
     if os.path.exists(project_dir):
-        print(f"Directory {project_dir} already exists. Removing it...")
-        shutil.rmtree(project_dir)
+        print(f"Directory {project_dir} already exists. Attempting to remove it...")
+        try:
+            shutil.rmtree(project_dir, onerror=remove_readonly)
+        except Exception as e:
+            print(f"Failed to remove directory {project_dir}: {e}")
+            print("Please manually delete the directory and try again.")
+            print("You can use: rmdir /s /q " + project_dir)
+            print("If that fails, try running the command prompt as Administrator or rebooting your system.")
+            sys.exit(1)
+
     print(f"Cloning {repo_url} to {project_dir}...")
     if not run_command(f"git clone {repo_url} {project_dir}"):
         print("Failed to clone repository.")
@@ -35,7 +49,6 @@ def create_project(project_name, project_dir, github_username, python_version="3
     if not os.path.exists(setup_script):
         print(f"Setup script {setup_script} not found.")
         sys.exit(1)
-    # On Windows, we need to activate Conda in the same shell
     activate_cmd = f"conda activate {env_name} && python setup_and_verify_project.py"
     if not run_command(activate_cmd, cwd=project_dir):
         print("Failed to run setup script.")
@@ -52,4 +65,3 @@ if __name__ == "__main__":
         sys.exit(1)
     project_name, project_dir, github_username = sys.argv[1], sys.argv[2], sys.argv[3]
     create_project(project_name, project_dir, github_username)
-    
