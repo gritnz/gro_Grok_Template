@@ -10,7 +10,9 @@ def run_command(command, cwd=None, shell=True):
     print(f"Output: {result.stdout}")
     if result.stderr:
         print(f"Error: {result.stderr}")
-    return result.returncode == 0
+    if result.returncode != 0:
+        raise RuntimeError(f"Command failed with return code {result.returncode}")
+    return True
 
 def remove_readonly(func, path, _):
     """Clear the readonly bit and reattempt the removal."""
@@ -32,15 +34,19 @@ def create_project(project_name, project_dir, github_username, python_version="3
             sys.exit(1)
 
     print(f"Cloning {repo_url} to {project_dir}...")
-    if not run_command(f"git clone {repo_url} {project_dir}"):
-        print("Failed to clone repository.")
+    try:
+        run_command(f"git clone {repo_url} {project_dir}")
+    except RuntimeError as e:
+        print(f"Failed to clone repository: {e}")
         sys.exit(1)
 
     # Step 2: Create Conda environment
     env_name = f"{project_name.lower()}_env"
     print(f"Creating Conda environment {env_name} with Python {python_version}...")
-    if not run_command(f"conda create -n {env_name} python={python_version} -y"):
-        print("Failed to create Conda environment.")
+    try:
+        run_command(f"conda create -n {env_name} python={python_version} -y")
+    except RuntimeError as e:
+        print(f"Failed to create Conda environment: {e}")
         sys.exit(1)
 
     # Step 3: Activate environment and run setup
@@ -49,9 +55,11 @@ def create_project(project_name, project_dir, github_username, python_version="3
     if not os.path.exists(setup_script):
         print(f"Setup script {setup_script} not found.")
         sys.exit(1)
-    activate_cmd = f"conda activate {env_name} && python setup_and_verify_project.py"
-    if not run_command(activate_cmd, cwd=project_dir):
-        print("Failed to run setup script.")
+    activate_cmd = f"conda activate {env_name} && python setup_and_verify_project.py {project_dir}"
+    try:
+        run_command(activate_cmd, cwd=project_dir)
+    except RuntimeError as e:
+        print(f"Failed to run setup script: {e}")
         sys.exit(1)
 
     print(f"Project {project_name} set up successfully at {project_dir}!")
