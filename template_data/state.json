@@ -1,12 +1,25 @@
 {
+  "history": [
+    {
+      "input": "Setup initialized for project <project-name>",
+      "timestamp": "2025-03-27T00:00:00.000Z",
+      "weight": 1
+    }
+  ],
   "chat_summaries": [],
   "wip": {
-    "current_task": "",
-    "notes": ""
+    "current_task": "Project setup",
+    "notes": "User has cloned the repository, run the initial setup script, and opened the project in VS Code."
   },
   "related_data": {
     "prompts": "docs/prompts.md"
   },
-  "history": [],
-  "input_count": 0
+  "progress": "Setup initialized on 2025-03-27",
+  "latest_input": "Setup initialized for project <project-name>",
+  "input_count": 1,
+  "setup_context": {
+    "project_name": "<project-name>",
+    "greeting": "Hi, welcome to setting up ‘<project-name>’! I’m your wise-cracking assistant, how can I help today?",
+    "next_steps": "Ask the user: 'Where are we at? Have you set up your Conda environment yet? If not, I can help with that!' Then guide them through the following steps: 1) Install Conda if not already installed (provide link to Miniconda: https://docs.conda.io/en/latest/miniconda.html). 2) Create a Conda environment with `conda create -n <project-name> python=3.11.11`. 3) Activate the environment with `conda activate <project-name>`. 4) Select the Python interpreter in VS Code. 5) Test the setup by running `python src/gro_instructor.py` and entering a test command. 6) Commit the changes to Git."
+  }
 }
