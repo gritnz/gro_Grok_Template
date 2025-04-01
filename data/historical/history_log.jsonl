@@ -1,0 +1,73 @@
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T20:25:49.676061", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T20:26:03.964746", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T20:26:16.468782", "weight": 1}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T20:26:27.445068", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T20:26:35.693802", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T20:26:53.198058", "weight": 1}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T20:27:03.750019", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T20:27:11.893252", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T20:27:20.422462", "weight": 1}
+{"input": "Hello #e5", "timestamp": "2025-03-18T20:47:40.333494", "weight": 5}
+{"input": "Help #e3", "timestamp": "2025-03-18T20:47:40.334494", "weight": 3}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:47:40.335495", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:47:40.336494", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:47:40.337494", "weight": 1}
+{"input": "Hello #e5", "timestamp": "2025-03-18T20:53:54.203123", "weight": 5}
+{"input": "Help #e3", "timestamp": "2025-03-18T20:53:54.204123", "weight": 3}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:53:54.205124", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:53:54.206124", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:53:54.207124", "weight": 1}
+{"input": "Hello #e5", "timestamp": "2025-03-18T20:54:43.923742", "weight": 5}
+{"input": "Help #e3", "timestamp": "2025-03-18T20:54:43.924743", "weight": 3}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:54:43.926046", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:54:43.927051", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:54:43.928050", "weight": 1}
+{"input": "Hello #e5", "timestamp": "2025-03-18T20:59:41.852032", "weight": 5}
+{"input": "Help #e3", "timestamp": "2025-03-18T20:59:41.853033", "weight": 3}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:59:41.854032", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:59:41.855032", "weight": 1}
+{"input": "Debug #e1", "timestamp": "2025-03-18T20:59:41.856032", "weight": 1}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T21:06:33.908925", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T21:06:45.557249", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T21:06:58.588915", "weight": 1}
+{"input": "\u201cSummarize #e2\u201d (triggers summary)", "timestamp": "2025-03-18T21:07:08.781849", "weight": 2}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T21:17:40.693644", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T21:17:57.887089", "weight": 3}
+{"input": "\u201cSummarize #e4\u201d", "timestamp": "2025-03-18T21:18:08.655410", "weight": 4}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-18T21:32:27.021143", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-18T21:32:37.637442", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T21:32:46.998681", "weight": 1}
+{"input": "\u201cSummarize #e1\u201d", "timestamp": "2025-03-18T21:32:57.109943", "weight": 1}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-18T21:36:09.660052", "weight": 1}
+{"input": "\u201cHello #e5\u201d", "timestamp": "2025-03-19T00:00:20.808851", "weight": 5}
+{"input": "\u201cHelp #e3\u201d", "timestamp": "2025-03-19T00:00:39.522461", "weight": 3}
+{"input": "\u201cDebug #e1\u201d", "timestamp": "2025-03-19T00:01:09.147259", "weight": 1}
+{"input": "\u201cSummarize #e1\u201d", "timestamp": "2025-03-19T00:01:11.530004", "weight": 1}
+{"input": "#e4 Random transfer test: I had made a mistake I have continued developing this project on the newly created \u201cgroGrokTemplate: Technical overview\u201d which is great. It mean the e-value system is working great. I will test the portability. I what to capture this chat then paste the updated state.json into the \u201cAI Assistance in chat wording\u201d chat and continue the Project build there. Lets up date the state.json (looking forward when i can get the agent to do this) mean while lets get this project back to home base", "timestamp": "2025-03-19T14:04:46.913918", "weight": 4}
+{"input": "\"Hello\"", "timestamp": "2025-03-23T15:49:25.434234", "weight": 2}
+{"input": "\"Hello\"", "timestamp": "2025-03-23T15:54:46.127940", "weight": 2}
+{"input": "\"debug\"", "timestamp": "2025-03-23T15:54:54.935085", "weight": 2}
+{"input": "Hello", "timestamp": "2025-03-23T16:01:39.738297", "weight": 2}
+{"input": "\"Hello\"", "timestamp": "2025-03-23T16:03:26.296195", "weight": 2}
+{"input": "\"debug\"", "timestamp": "2025-03-23T16:03:36.264774", "weight": 2}
+{"input": "#e1", "timestamp": "2025-03-23T16:11:31.505856", "weight": 1}
+{"input": "#e3", "timestamp": "2025-03-23T16:11:43.594373", "weight": 3}
+{"input": "#e4", "timestamp": "2025-03-23T16:12:11.442553", "weight": 4}
+{"input": "#e2", "timestamp": "2025-03-23T16:12:25.898740", "weight": 2}
+{"input": "#e5", "timestamp": "2025-03-23T16:12:36.203297", "weight": 5}
+{"input": "#e1", "timestamp": "2025-03-23T16:21:18.515309", "weight": 1}
+{"input": "#e2", "timestamp": "2025-03-23T16:21:34.756909", "weight": 2}
+{"input": "#e5", "timestamp": "2025-03-23T16:21:43.476299", "weight": 5}
+{"input": "#e1", "timestamp": "2025-03-24T11:06:02.357980", "weight": 1}
+{"input": "#e2", "timestamp": "2025-03-24T11:06:09.877786", "weight": 2}
+{"input": "#e5", "timestamp": "2025-03-24T11:06:24.406064", "weight": 5}
+{"input": "#e4", "timestamp": "2025-03-25T19:49:01.360846", "weight": 4}
+{"input": "#e1 \"Debug test\"", "timestamp": "2025-03-25T21:31:31.590541", "weight": 1}
+{"input": "#e4 \"Capture memory gaps\"", "timestamp": "2025-03-25T21:31:47.998669", "weight": 4}
+{"input": "#e4 \"summarize\"", "timestamp": "2025-03-25T21:31:59.239027", "weight": 4}
+{"input": "#e4 \"summarize\"", "timestamp": "2025-03-25T22:35:02.233864", "weight": 4}
+{"input": "#e3 \"Test automation for e3 capture. Planning to improve logging.\" #DT \u2018deep thought\u2019 Explore adding a logging module to track all #e1\u2013#e5 inputs in real time, using a lightweight database like SQLite. #DTend", "timestamp": "2025-03-26T13:59:09.542873", "weight": 5}
+{"input": "#e3 \"Test automation for e3 capture. Planning to improve logging.\" #DT \u2018deep thought\u2019 Explore adding a logging module to track all #e1\u2013#e5 inputs in real time, using a lightweight database like SQLite. #DTend", "timestamp": "2025-03-26T15:41:47.972568", "weight": 5}
+{"input": "#e3 \"Test automation for e3 capture. Planning to improve logging.\" #DT \u2018deep thought\u2019 Explore adding a logging module to track all #e1\u2013#e5 inputs in real time, using a lightweight database like SQLite. #DTend", "timestamp": "2025-03-26T15:43:34.438548", "weight": 5}
+{"input": "#e3 \"Test automation for e3 capture. Planning to improve logging.\" #DT \u2018deep thought\u2019 Explore adding a logging module to track all #e1\u2013#e5 inputs in real time, using a lightweight database like SQLite. #DTend", "timestamp": "2025-03-26T15:56:20.907439", "weight": 5}
+{"input": "#e3 \"Test automation for e3 capture in gro_Investments. Planning to improve logging.\" #DT \u2018deep thought\u2019 Explore adding a logging module to track all #e1\u2013#e5 inputs in real time, using a lightweight database like SQLite. #DTend", "timestamp": "2025-03-26T19:14:10.927360", "weight": 5}

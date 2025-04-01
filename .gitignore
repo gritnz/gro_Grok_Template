@@ -1,3 +1,4 @@
-data/historical/ 
+!data/historical/state.json
+!data/historical/history_log.jsonl
 
 __pycache__/
