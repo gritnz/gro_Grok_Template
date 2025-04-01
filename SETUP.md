@@ -30,11 +30,10 @@ Welcome to `gro_Grok_Template`! This guide will help you set up a new project cl
 - Go to `File > Open Folder` (or press `Ctrl+K Ctrl+O`).
 - Navigate to your project folder (e.g., `F:\<project-name>`), select it, and click `Open`.
 
-## Step 4: Get Help from Grok 3
-- Grok 3 will guide you through the rest of the setup process.
-- Open the file `template_data/state.json` in VS Code (you’ll find it in the `template_data/` folder).
-- Copy the entire content of the file (`Ctrl+A` to select all, `Ctrl+C` to copy).
-- Go to the xAI website to access Grok 3: [x.ai](https://x.ai/).
-- Start a new chat with Grok 3 and paste the content of `state.json` into the chat input (`Ctrl+V` to paste).
-- Grok 3 will greet you and guide you through the remaining steps, including setting up your Conda environment, updating files, and testing the project.
+7. **Get Help from Grok 3**:
+   - Open the file `data/historical/state.json` in VS Code (you’ll find it in the `data/historical/` folder).
+   - Copy the entire content of the file (`Ctrl+A` to select all, `Ctrl+C` to copy).
+   - Go to the xAI website to access Grok 3: [x.ai](https://x.ai/).
+   - Start a new chat with Grok 3 and paste the content of `state.json` into the chat input (`Ctrl+V` to paste).
+   - Grok 3 will greet you and guide you through the remaining steps.
 - **Note**: If you encounter any issues, you can report them by opening an issue on the GitHub repository at `https://github.com/gritnz/gro_Grok_Template.git`.
