@@ -28,7 +28,7 @@ def update_gro_instructor():
 def update_gitignore():
     """Ensure .gitignore includes __pycache__/ and data/historical/."""
     gitignore_path = ".gitignore"
-    required_entries = ["__pycache__/", "data/historical/"]
+    required_entries = ["__pycache__/", "data/historical/*", "!data/historical/state.json", "!data/historical/history_log.jsonl"]
 
     # Read existing .gitignore
     try:
